@@ -4,12 +4,15 @@
 /node_modules
 /.pnp
 .pnp.js
+.bsb.lock
+.merlin
 
 # testing
 /coverage
 
 # production
 /build
+/lib
 
 # misc
 .DS_Store

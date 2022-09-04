@@ -1,0 +1,6 @@
+body {
+    user-select: none;
+    cursor: default;
+    color: white;
+    font-family: Helvetica Neue;
+}
