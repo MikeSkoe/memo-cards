@@ -32,18 +32,19 @@ function next(t, known) {
     return t;
   }
   var review$1 = review._0;
-  var review$2 = View.Update.next(review$1, known);
+  var newReview = View.Update.next(review$1, known);
+  var review$2 = review$1.reviewing;
   if (review$2 !== undefined) {
     return {
             stack: t.stack,
             view: /* Review */{
-              _0: review$2
+              _0: newReview
             },
             iteration: t.iteration
           };
   } else {
     return {
-            stack: Stack.Update.updateCards(t.stack, Belt_List.concat(review$1.remember, review$1.forget)),
+            stack: Stack.Update.updateCards(t.stack, Belt_List.concat(newReview.remember, newReview.forget)),
             view: /* Overview */0,
             iteration: t.iteration + 1 | 0
           };

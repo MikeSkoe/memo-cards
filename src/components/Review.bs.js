@@ -10,6 +10,7 @@ import * as TitleComp from "./TitleComp.bs.js";
 function Review(Props) {
   var review = Props.review;
   var dispatch = Curry._1(State.AppState.useDispatch, undefined);
+  var reviewing = review.reviewing;
   return React.createElement(React.Fragment, undefined, React.createElement(TitleComp.make, {
                   children: "Review"
                 }), React.createElement("button", {
@@ -20,9 +21,9 @@ function Review(Props) {
                   onClick: (function (param) {
                       return Curry._1(dispatch, /* Forget */2);
                     })
-                }, "forget"), React.createElement(CardComp.make, {
-                  card: review.reviewing
-                }), React.createElement(BoxComp.make, {
+                }, "forget"), reviewing !== undefined ? React.createElement(CardComp.make, {
+                    card: reviewing
+                  }) : React.createElement(React.Fragment, undefined), React.createElement(BoxComp.make, {
                   cards: review.toReview,
                   label: "To review"
                 }), React.createElement(BoxComp.make, {

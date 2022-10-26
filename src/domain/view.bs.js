@@ -2,13 +2,6 @@
 
 import * as Card from "./card.bs.js";
 
-var emptyReview = {
-  toReview: /* [] */0,
-  reviewing: Card.empty,
-  remember: /* [] */0,
-  forget: /* [] */0
-};
-
 function make(cards) {
   if (cards) {
     return /* Review */{
@@ -25,29 +18,57 @@ function make(cards) {
 }
 
 function next(param, known) {
-  var toReview = param.toReview;
-  if (!toReview) {
-    return ;
-  }
   var forget = param.forget;
   var remember = param.remember;
   var reviewing = param.reviewing;
+  var toReview = param.toReview;
+  var match = known ? (
+      reviewing !== undefined ? [
+          {
+            hd: Card.Update.next(reviewing),
+            tl: remember
+          },
+          forget
+        ] : [
+          remember,
+          forget
+        ]
+    ) : (
+      reviewing !== undefined ? [
+          remember,
+          {
+            hd: Card.Update.back(reviewing),
+            tl: forget
+          }
+        ] : [
+          remember,
+          forget
+        ]
+    );
+  var match$1 = toReview ? [
+      toReview.hd,
+      toReview.tl
+    ] : [
+      undefined,
+      /* [] */0
+    ];
   return {
-          toReview: toReview.tl,
-          reviewing: toReview.hd,
-          remember: known ? ({
-                hd: Card.Update.next(reviewing),
-                tl: remember
-              }) : remember,
-          forget: known ? forget : ({
-                hd: Card.Update.back(reviewing),
-                tl: forget
-              })
+          toReview: match$1[1],
+          reviewing: match$1[0],
+          remember: match[0],
+          forget: match[1]
         };
 }
 
 var Update = {
   next: next
+};
+
+var emptyReview = {
+  toReview: /* [] */0,
+  reviewing: undefined,
+  remember: /* [] */0,
+  forget: /* [] */0
 };
 
 var empty = /* Overview */0;

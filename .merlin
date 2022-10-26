@@ -1,12 +1,12 @@
 ####{BSB GENERATED: NO EDIT
-FLG -ppx '/Users/mikhailskorykh/Documents/codes/memo-cards/node_modules/rescript/darwin/bsc.exe -as-ppx -bs-jsx 3'
-S /Users/mikhailskorykh/Documents/codes/memo-cards/node_modules/rescript/lib/ocaml
-B /Users/mikhailskorykh/Documents/codes/memo-cards/node_modules/rescript/lib/ocaml
+FLG -ppx '/Users/mikeskoe/Documents/codes/memo-cards/node_modules/rescript/darwin/bsc.exe -as-ppx -bs-jsx 3'
+S /Users/mikeskoe/Documents/codes/memo-cards/node_modules/rescript/lib/ocaml
+B /Users/mikeskoe/Documents/codes/memo-cards/node_modules/rescript/lib/ocaml
 FLG -w +a-4-9-20-40-41-42-50-61-102
-S /Users/mikhailskorykh/Documents/codes/memo-cards/node_modules/@rescript/react/lib/ocaml
-B /Users/mikhailskorykh/Documents/codes/memo-cards/node_modules/@rescript/react/lib/ocaml
-S /Users/mikhailskorykh/Documents/codes/memo-cards/node_modules/remporium/lib/ocaml
-B /Users/mikhailskorykh/Documents/codes/memo-cards/node_modules/remporium/lib/ocaml
+S /Users/mikeskoe/Documents/codes/memo-cards/node_modules/@rescript/react/lib/ocaml
+B /Users/mikeskoe/Documents/codes/memo-cards/node_modules/@rescript/react/lib/ocaml
+S /Users/mikeskoe/Documents/codes/memo-cards/node_modules/remporium/lib/ocaml
+B /Users/mikeskoe/Documents/codes/memo-cards/node_modules/remporium/lib/ocaml
 S src/domain
 B lib/bs/src/domain
 S src/components

@@ -29,14 +29,21 @@ module Update = {
     }
 
     let next = (t, known: bool) => switch t.view {
-        | View.Review(review) => switch View.Update.next(review, known) {
-            | Some(review) => { ...t, view: View.Review(review) }
-            | None => {
-                iteration: t.iteration + 1,
-                stack: t.stack->Stack.Update.updateCards(
-                    Belt.List.concat(review.remember, review.forget),
-                ),
-                view: View.Overview,
+        | View.Review(review) => {
+            let newReview = View.Update.next(review, known);
+
+            switch review.reviewing {
+                | Some(review) => {
+                    ...t,
+                    view: View.Review(newReview)
+                }
+                | None => {
+                    iteration: t.iteration + 1,
+                    stack: t.stack->Stack.Update.updateCards(
+                        Belt.List.concat(newReview.remember, newReview.forget),
+                    ),
+                    view: View.Overview,
+                }
             }
         }
         | View.Overview => t

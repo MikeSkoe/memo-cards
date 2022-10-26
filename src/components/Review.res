@@ -7,7 +7,10 @@ let make = (~review: View.review) => {
         <TitleComp>{"Review"}</TitleComp>
         <button onClick={_ => dispatch(State.Remember)}>{"remember"->React.string}</button>
         <button onClick={_ => dispatch(State.Forget)}>{"forget"->React.string}</button>
-        <CardComp card=reviewing />
+        {switch reviewing {
+            | Some(review) => <CardComp card=review />
+            | None => <></>
+        }}
 
         <BoxComp cards=toReview label="To review" />
         <BoxComp cards=remember label="Remember" />
