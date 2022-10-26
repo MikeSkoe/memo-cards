@@ -1,9 +1,9 @@
 @react.component
-let make = (~box: Box.t, ~label: string) => {
+let make = (~cards: list<Card.t>, ~label: string) => {
     <>
         <h2>{label->React.string}</h2>
         {
-            box.cards
+            cards
             ->Belt.List.map(card => <CardComp key=card.front card=card />)
             ->Belt.List.toArray
             ->React.array

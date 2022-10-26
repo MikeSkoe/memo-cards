@@ -5,9 +5,9 @@ import * as CardComp from "./CardComp.bs.js";
 import * as Belt_List from "rescript/lib/es6/belt_List.js";
 
 function BoxComp(Props) {
-  var box = Props.box;
+  var cards = Props.cards;
   var label = Props.label;
-  return React.createElement(React.Fragment, undefined, React.createElement("h2", undefined, label), Belt_List.toArray(Belt_List.map(box.cards, (function (card) {
+  return React.createElement(React.Fragment, undefined, React.createElement("h2", undefined, label), Belt_List.toArray(Belt_List.map(cards, (function (card) {
                         return React.createElement(CardComp.make, {
                                     card: card,
                                     key: card.front

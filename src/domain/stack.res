@@ -1,43 +1,45 @@
 type t = {
-    new: Box.t,
-    familiar: Box.t,
-    remember: Box.t,
-    know: Box.t,
-    done: Box.t,
+    cards: list<Card.t>,
 };
 
 type iteration = int;
 
 let empty = {
-    new: Box.empty->Box.Update.add(Card.make(~front="new card fron", ~back="the card back")),
-    familiar: Box.empty,
-    remember: Box.empty,
-    know: Box.empty,
-    done: Box.empty,
+    cards: list{}
 };
 
-let make = (~new, ~familiar, ~remember, ~know, ~done) => {
-    new, familiar, remember, know, done,
-};
+let make = (~cards) => { cards };
 
 module Update = {
     let addCard = (t: t, card: Card.t): t => {
-        ...t,
-        new: t.new->Box.Update.add(card),
+        cards: list{card, ...t.cards},
+    }
+
+    let updateCard = (t: t, card: Card.t): t => {
+        cards: t.cards->Belt.List.map(crd => crd.front === card.front && card.back === card.back ? card : crd)
+    }
+
+    let rec updateCards = (t: t, cards: list<Card.t>): t => switch cards {
+        | list{} => t
+        | list{head, ...tail} => updateCards(updateCard(t, head), tail)
     }
 }
 
 module Selectors = {
-    let getBoxes = (t: t, iteration: iteration): Box.t => {
-        let reviewEach = (day, cards) => mod(iteration, day) === 0 ? cards : list{};
+    let getByLevel = ({ cards }: t, level): list<Card.t> =>
+        cards
+        ->Belt.List.keep(card => card.level === level);
 
-        let cards =
-            t.new.cards
-            ->Belt.List.concat(reviewEach(2, t.familiar.cards))
-            ->Belt.List.concat(reviewEach(3, t.remember.cards))
-            ->Belt.List.concat(reviewEach(4, t.know.cards));
+    let getCards = (t: t, iteration: iteration): list<Card.t> => {
+        let reviewEach = (day, cards) =>
+            mod(iteration, day) === 0
+            ? cards
+            : list{};
 
-        Box.make(~cards=cards)
+        getByLevel(t, Card.New)
+            ->Belt.List.concat(reviewEach(2, getByLevel(t, Card.Familiar)))
+            ->Belt.List.concat(reviewEach(3, getByLevel(t, Card.Remember)))
+            ->Belt.List.concat(reviewEach(4, getByLevel(t, Card.Know)));
     };
 }
 

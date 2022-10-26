@@ -3,34 +3,43 @@
  */
 
 type t = {
-    boxes: Stack.t,
-    view: Selected.t,
+    stack: Stack.t,
+    view: View.t,
     iteration: Stack.iteration,
 };
 
 let empty: t = {
-    boxes: Stack.empty,
-    view: Selected.empty,
+    stack: Stack.empty,
+    view: View.empty,
     iteration: 0,
 };
 
 module Update = {
     let addCard = (t, card): t => {
         ...t,
-        boxes: t.boxes->Stack.Update.addCard(card),
+        stack: t.stack->Stack.Update.addCard(card),
     }
 
     let startReview = t => {
         ...t,
         view: 
-            t.boxes
-            ->Stack.Selectors.getBoxes(t.iteration)
-            ->Selected.make,
+            t.stack
+            ->Stack.Selectors.getCards(t.iteration)
+            ->View.make,
     }
 
-    let next = (t, known: bool) => {
-        ...t,
-        view: Selected.Update.next(t.view, known),
+    let next = (t, known: bool) => switch t.view {
+        | View.Review(review) => switch View.Update.next(review, known) {
+            | Some(review) => { ...t, view: View.Review(review) }
+            | None => {
+                iteration: t.iteration + 1,
+                stack: t.stack->Stack.Update.updateCards(
+                    Belt.List.concat(review.remember, review.forget),
+                ),
+                view: View.Overview,
+            }
+        }
+        | View.Overview => t
     }
 }
 

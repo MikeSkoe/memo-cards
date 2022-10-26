@@ -7,7 +7,7 @@ module Input = {
         let onChange = e => ReactEvent.Form.currentTarget(e)["value"]->setInput;
         let onKeyDown = e => {
             if ReactEvent.Keyboard.key(e) === "Enter" {
-                Card.make(~front=input, ~back="")
+                Card.make(~front=input, ~back="", ~level=Card.New)
                     ->State.AddCard
                     ->dispatch
                 ReactEvent.Keyboard.currentTarget(e)["value"] = "";
@@ -26,7 +26,11 @@ module Input = {
 
 @react.component
 let make = () => {
-    let { new, familiar, remember, know } = State.AppState.useSelector(({ boxes }) => boxes);
+    let new = State.AppState.useSelector(({ stack }) => stack->Stack.Selectors.getByLevel(Card.New));
+    let familiar = State.AppState.useSelector(({ stack }) => stack->Stack.Selectors.getByLevel(Card.Familiar));
+    let remember = State.AppState.useSelector(({ stack }) => stack->Stack.Selectors.getByLevel(Card.Remember));
+    let know = State.AppState.useSelector(({ stack }) => stack->Stack.Selectors.getByLevel(Card.Know));
+
     let iteration = State.AppState.useSelector(({ iteration }) => iteration);
 
     <>
@@ -34,10 +38,10 @@ let make = () => {
             {`Iteration: ${iteration->Belt.Int.toString}`}
         </TitleComp>
         <Input />
-        <BoxComp box=new label="New"/>
-        <BoxComp box=familiar label="Familiar"/>
-        <BoxComp box=remember label="Remember"/>
-        <BoxComp box=know label="Know"/>
+        <BoxComp cards=new label="New"/>
+        <BoxComp cards=familiar label="Familiar"/>
+        <BoxComp cards=remember label="Remember"/>
+        <BoxComp cards=know label="Know"/>
     </>
 }
 
