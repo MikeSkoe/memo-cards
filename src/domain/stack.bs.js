@@ -9,23 +9,19 @@ function make(cards) {
 
 function addCard(t, card) {
   return {
-          cards: {
-            hd: card,
-            tl: t.cards
-          }
+          hd: card,
+          tl: t
         };
 }
 
-function updateCard(t, card) {
-  return {
-          cards: Belt_List.map(t.cards, (function (crd) {
-                  if (crd.front === card.front && card.back === card.back) {
-                    return card;
-                  } else {
-                    return crd;
-                  }
-                }))
-        };
+function updateCard(t, newCard) {
+  return Belt_List.map(t, (function (card) {
+                if (card.front === newCard.front && card.back === newCard.back) {
+                  return newCard;
+                } else {
+                  return card;
+                }
+              }));
 }
 
 function updateCards(_t, _cards) {
@@ -47,8 +43,8 @@ var Update = {
   updateCards: updateCards
 };
 
-function getByLevel(param, level) {
-  return Belt_List.keep(param.cards, (function (card) {
+function getByLevel(t, level) {
+  return Belt_List.keep(t, (function (card) {
                 return card.level === level;
               }));
 }
@@ -95,9 +91,7 @@ var Selectors = {
   getCards: getCards
 };
 
-var empty = {
-  cards: /* [] */0
-};
+var empty = /* [] */0;
 
 export {
   empty ,

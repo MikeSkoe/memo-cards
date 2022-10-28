@@ -1,35 +1,32 @@
 type review = {
-    toReview: list<Card.t>,
+    toReview: Stack.t,
     reviewing: option<Card.t>,
-    remember: list<Card.t>,
-    forget: list<Card.t>,
+    remember: Stack.t,
+    forget: Stack.t,
 }
 
 let emptyReview = {
-    toReview: list{},
+    toReview: Stack.empty,
     reviewing: None,
-    remember: list{},
-    forget: list{},
+    remember: Stack.empty,
+    forget: Stack.empty,
 }
 
 type t = Review(review) | Overview;
 
 let empty = Overview;
 
-let make = (cards: list<Card.t>) => switch cards {
-    | list{head, ...tail} => Review({
-        ...emptyReview,
-        reviewing: Some(head),
-        toReview: tail,
-    })
-    | list{} => Overview
-};
+let make = (head: Card.t, tail: Stack.t) => Review({
+    ...emptyReview,
+    reviewing: Some(head),
+    toReview: tail,
+});
 
 module Update = {
     let next = ({ toReview, reviewing, remember, forget }, known) => {
         let (remember, forget) = switch (known, reviewing) {
-            | (true, Some(review)) => (list{Card.Update.next(review), ...remember}, forget )
-            | (false, Some(review)) => (remember, list{Card.Update.back(review), ...forget})
+            | (true, Some(review)) => (remember->Stack.Update.updateCard(Card.Update.next(review)), forget)
+            | (false, Some(review)) => (remember, forget->Stack.Update.updateCard(Card.Update.back(review)))
             | (true, None)
             | (false, None) => (remember, forget)
         }

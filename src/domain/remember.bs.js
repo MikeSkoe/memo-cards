@@ -18,9 +18,10 @@ function addCard(t, card) {
 }
 
 function startReview(t) {
+  var cards = Stack.Selectors.getCards(t.stack, t.iteration);
   return {
           stack: t.stack,
-          view: View.make(Stack.Selectors.getCards(t.stack, t.iteration)),
+          view: cards ? View.make(cards.hd, cards.tl) : View.empty,
           iteration: t.iteration
         };
 }

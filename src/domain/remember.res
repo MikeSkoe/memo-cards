@@ -25,7 +25,10 @@ module Update = {
         view: 
             t.stack
             ->Stack.Selectors.getCards(t.iteration)
-            ->View.make,
+            ->cards => switch cards {
+                | list{} => View.empty
+                | list{head, ...tail} => View.make(head, tail)
+            }
     }
 
     let next = (t, known: bool) => switch t.view {
