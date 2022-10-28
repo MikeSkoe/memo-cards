@@ -28,7 +28,7 @@ function next(param, known) {
   var toReview = param.toReview;
   var match = known ? (
       reviewing !== undefined ? [
-          Stack.Update.updateCard(remember, Card.Update.next(reviewing)),
+          Stack.Update.addCard(remember, Card.Update.next(reviewing)),
           forget
         ] : [
           remember,
@@ -37,7 +37,7 @@ function next(param, known) {
     ) : (
       reviewing !== undefined ? [
           remember,
-          Stack.Update.updateCard(forget, Card.Update.back(reviewing))
+          Stack.Update.addCard(forget, Card.Update.back(reviewing))
         ] : [
           remember,
           forget

@@ -25,8 +25,14 @@ let make = (head: Card.t, tail: Stack.t) => Review({
 module Update = {
     let next = ({ toReview, reviewing, remember, forget }, known) => {
         let (remember, forget) = switch (known, reviewing) {
-            | (true, Some(review)) => (remember->Stack.Update.updateCard(Card.Update.next(review)), forget)
-            | (false, Some(review)) => (remember, forget->Stack.Update.updateCard(Card.Update.back(review)))
+            | (true, Some(review)) => (
+                remember->Stack.Update.addCard(Card.Update.next(review)),
+                forget,
+            )
+            | (false, Some(review)) => (
+                remember,
+                forget->Stack.Update.addCard(Card.Update.back(review)),
+            )
             | (true, None)
             | (false, None) => (remember, forget)
         }
