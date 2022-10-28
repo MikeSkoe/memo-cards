@@ -27,19 +27,20 @@ module Update = {
 
 module Selectors = {
     let getByLevel = ({ cards }: t, level): list<Card.t> =>
-        cards
-        ->Belt.List.keep(card => card.level === level);
+        cards->Belt.List.keep(card => card.level === level);
 
     let getCards = (t: t, iteration: iteration): list<Card.t> => {
-        let reviewEach = (day, cards) =>
-            mod(iteration, day) === 0
-            ? cards
-            : list{};
+        let rec sliceFirstEmptyLists = (lst: list<list<Card.t>>): list<list<Card.t>> => switch lst {
+            | list{head, ...tail} if Belt.List.size(head) == 0 => sliceFirstEmptyLists(tail)
+            | list{_head, ..._} => lst
+            | list{} => lst
+        };
 
-        getByLevel(t, Card.New)
-            ->Belt.List.concat(reviewEach(2, getByLevel(t, Card.Familiar)))
-            ->Belt.List.concat(reviewEach(3, getByLevel(t, Card.Remember)))
-            ->Belt.List.concat(reviewEach(4, getByLevel(t, Card.Know)));
+        list{Card.New, Card.Familiar, Card.Remember, Card.Know}
+            ->Belt.List.map(getByLevel(t))
+            ->sliceFirstEmptyLists
+            ->Belt.List.mapWithIndex((day, cards) => mod(iteration, day + 1) === 0 ? cards : list{})
+            ->Belt.List.reduce(list{}, Belt.List.concat)
     };
 }
 

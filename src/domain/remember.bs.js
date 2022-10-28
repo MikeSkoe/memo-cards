@@ -2,7 +2,6 @@
 
 import * as View from "./view.bs.js";
 import * as Stack from "./stack.bs.js";
-import * as Belt_List from "rescript/lib/es6/belt_List.js";
 
 var empty = {
   stack: Stack.empty,
@@ -31,10 +30,9 @@ function next(t, known) {
   if (!review) {
     return t;
   }
-  var review$1 = review._0;
-  var newReview = View.Update.next(review$1, known);
-  var review$2 = review$1.reviewing;
-  if (review$2 !== undefined) {
+  var newReview = View.Update.next(review._0, known);
+  var match = newReview.reviewing;
+  if (match !== undefined) {
     return {
             stack: t.stack,
             view: /* Review */{
@@ -44,7 +42,7 @@ function next(t, known) {
           };
   } else {
     return {
-            stack: Stack.Update.updateCards(t.stack, Belt_List.concat(newReview.remember, newReview.forget)),
+            stack: Stack.Update.updateCards(Stack.Update.updateCards(t.stack, newReview.remember), newReview.forget),
             view: /* Overview */0,
             iteration: t.iteration + 1 | 0
           };

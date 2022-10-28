@@ -32,16 +32,16 @@ module Update = {
         | View.Review(review) => {
             let newReview = View.Update.next(review, known);
 
-            switch review.reviewing {
-                | Some(review) => {
+            switch newReview.reviewing {
+                | Some(_) => {
                     ...t,
                     view: View.Review(newReview)
                 }
                 | None => {
                     iteration: t.iteration + 1,
-                    stack: t.stack->Stack.Update.updateCards(
-                        Belt.List.concat(newReview.remember, newReview.forget),
-                    ),
+                    stack: t.stack
+                        ->Stack.Update.updateCards(newReview.remember)
+                        ->Stack.Update.updateCards(newReview.forget),
                     view: View.Overview,
                 }
             }

@@ -54,14 +54,40 @@ function getByLevel(param, level) {
 }
 
 function getCards(t, iteration) {
-  var reviewEach = function (day, cards) {
-    if (Caml_int32.mod_(iteration, day) === 0) {
-      return cards;
-    } else {
-      return /* [] */0;
-    }
+  var sliceFirstEmptyLists = function (_lst) {
+    while(true) {
+      var lst = _lst;
+      if (!lst) {
+        return lst;
+      }
+      if (Belt_List.size(lst.hd) !== 0) {
+        return lst;
+      }
+      _lst = lst.tl;
+      continue ;
+    };
   };
-  return Belt_List.concat(Belt_List.concat(Belt_List.concat(getByLevel(t, /* New */0), reviewEach(2, getByLevel(t, /* Familiar */1))), reviewEach(3, getByLevel(t, /* Remember */2))), reviewEach(4, getByLevel(t, /* Know */3)));
+  return Belt_List.reduce(Belt_List.mapWithIndex(sliceFirstEmptyLists(Belt_List.map({
+                          hd: /* New */0,
+                          tl: {
+                            hd: /* Familiar */1,
+                            tl: {
+                              hd: /* Remember */2,
+                              tl: {
+                                hd: /* Know */3,
+                                tl: /* [] */0
+                              }
+                            }
+                          }
+                        }, (function (param) {
+                            return getByLevel(t, param);
+                          }))), (function (day, cards) {
+                    if (Caml_int32.mod_(iteration, day + 1 | 0) === 0) {
+                      return cards;
+                    } else {
+                      return /* [] */0;
+                    }
+                  })), /* [] */0, Belt_List.concat);
 }
 
 var Selectors = {
