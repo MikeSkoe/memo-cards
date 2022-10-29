@@ -22,20 +22,22 @@ let make = (head: Card.t, tail: Stack.t) => Review({
     toReview: tail,
 });
 
+let andThen = (f, g, x) => x->f->g;
+
 module Update = {
     let next = ({ toReview, reviewing, remember, forget }, known) => {
-        let (remember, forget) = switch (known, reviewing) {
-            | (true, Some(review)) => (
-                remember->Stack.Update.addCard(Card.Update.next(review)),
-                forget,
+        let remember = (known ? reviewing : None)
+            ->Belt.Option.map(
+                andThen(Card.Update.next, Stack.Update.addCard(remember)),
             )
-            | (false, Some(review)) => (
-                remember,
-                forget->Stack.Update.addCard(Card.Update.back(review)),
+            ->Belt.Option.getWithDefault(remember);
+
+        let forget = (!known ? reviewing : None)
+            ->Belt.Option.map(
+                andThen(Card.Update.back, Stack.Update.addCard(forget)),
             )
-            | (true, None)
-            | (false, None) => (remember, forget)
-        }
+            ->Belt.Option.getWithDefault(forget);
+
         let (reviewing, toReview) = switch toReview {
             | list{head, ...tail} => (Some(head), tail)
             | list{} => (None, list{})
