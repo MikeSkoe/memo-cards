@@ -1,49 +1,58 @@
 type review = {
     toReview: Stack.t,
-    reviewing: option<Card.t>,
+    reviewing: Card.t,
     remember: Stack.t,
     forget: Stack.t,
+    skipped: Stack.t,
 }
 
 let emptyReview = {
     toReview: Stack.empty,
-    reviewing: None,
+    reviewing: Card.empty,
     remember: Stack.empty,
     forget: Stack.empty,
+    skipped: Stack.empty,
 }
 
-type t = Review(review) | Overview;
+type t = InProgress(review) | Done(Stack.t) | Overview;
 
 let empty = Overview;
 
-let make = (head: Card.t, tail: Stack.t) => Review({
+let make = (head: Card.t, tail: Stack.t) => InProgress({
     ...emptyReview,
-    reviewing: Some(head),
+    reviewing: head,
     toReview: tail,
 });
 
-let andThen = (f, g, x) => x->f->g;
+// -- UPDATE --
 
-module Update = {
-    let next = ({ toReview, reviewing, remember, forget }, known) => {
-        let remember = (known ? reviewing : None)
-            ->Belt.Option.map(
-                andThen(Card.Update.next, Stack.Update.addCard(remember)),
-            )
-            ->Belt.Option.getWithDefault(remember);
+let next = ({ toReview, reviewing, remember, forget, skipped }, familiarity) => {
+    let reviewing' = reviewing->Card.mapLevel(Card.shiftLevel(_, familiarity));
 
-        let forget = (!known ? reviewing : None)
-            ->Belt.Option.map(
-                andThen(Card.Update.back, Stack.Update.addCard(forget)),
-            )
-            ->Belt.Option.getWithDefault(forget);
+    let forget = familiarity == Card.Back
+        ? forget->Stack.addCard(reviewing')
+        : forget;
+    let skipped = familiarity == Card.Skip
+        ? skipped->Stack.addCard(reviewing')
+        : skipped;
+    let remember = familiarity == Card.Next
+        ? remember->Stack.addCard(reviewing')
+        : remember;
 
-        let (reviewing, toReview) = switch toReview {
-            | list{head, ...tail} => (Some(head), tail)
-            | list{} => (None, list{})
-        }
-
-        { reviewing, toReview, remember, forget }
-    };
-}
+    switch toReview {
+        | list{} => Done(
+            forget
+            ->Stack.addCard(reviewing')
+            ->Stack.concat(skipped)
+            ->Stack.concat(remember)
+        )
+        | list{head, ...tail} => InProgress({
+            toReview: tail,
+            reviewing: head,
+            remember,
+            forget,
+            skipped,
+        })
+    }
+};
 

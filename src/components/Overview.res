@@ -14,7 +14,7 @@ module Input = {
                 setInput(_ => "");
             }
         }
-        let onClick = _ => dispatch(State.Review);
+        let onClick = _ => dispatch(State.StartReview);
 
         <>
             <div>{input->React.string}</div>
@@ -26,10 +26,10 @@ module Input = {
 
 @react.component
 let make = () => {
-    let new = State.AppState.useSelector(({ stack }) => stack->Stack.Selectors.getByLevel(Card.New));
-    let familiar = State.AppState.useSelector(({ stack }) => stack->Stack.Selectors.getByLevel(Card.Familiar));
-    let remember = State.AppState.useSelector(({ stack }) => stack->Stack.Selectors.getByLevel(Card.Remember));
-    let know = State.AppState.useSelector(({ stack }) => stack->Stack.Selectors.getByLevel(Card.Know));
+    let new = State.AppState.useSelector(({ stack }) => stack->Stack.getByLevel(Card.New));
+    let familiar = State.AppState.useSelector(({ stack }) => stack->Stack.getByLevel(Card.Familiar));
+    let remember = State.AppState.useSelector(({ stack }) => stack->Stack.getByLevel(Card.Remember));
+    let know = State.AppState.useSelector(({ stack }) => stack->Stack.getByLevel(Card.Know));
 
     let iteration = State.AppState.useSelector(({ iteration }) => iteration);
 

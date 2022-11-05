@@ -4,17 +4,12 @@ import * as Remember from "../domain/remember.bs.js";
 import * as Remporium from "remporium/src/Remporium.bs.js";
 
 function reducer(t, action) {
-  if (typeof action !== "number") {
-    return Remember.Update.addCard(t, action._0);
-  }
-  switch (action) {
-    case /* Review */0 :
-        return Remember.Update.startReview(t);
-    case /* Remember */1 :
-        return Remember.Update.next(t, true);
-    case /* Forget */2 :
-        return Remember.Update.next(t, false);
-    
+  if (typeof action === "number") {
+    return Remember.startReview(t);
+  } else if (action.TAG === /* AddCard */0) {
+    return Remember.addCard(t, action._0);
+  } else {
+    return Remember.next(t, action._0);
   }
 }
 

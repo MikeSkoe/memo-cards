@@ -1,14 +1,12 @@
 type action =
     | AddCard(Card.t)
-    | Review
-    | Remember
-    | Forget;
+    | StartReview
+    | Review(Card.familiarity)
 
 let reducer = (t, action) => switch action {
-    | AddCard(card) => t->Remember.Update.addCard(card)
-    | Review => t->Remember.Update.startReview
-    | Remember => t->Remember.Update.next(true)
-    | Forget => t->Remember.Update.next(false)
+    | AddCard(card) => t->Remember.addCard(card)
+    | StartReview => t->Remember.startReview
+    | Review(familiarity) => t->Remember.next(familiarity)
 }
 
 let store = Remporium.makeStore(Remember.empty, reducer);

@@ -20,7 +20,8 @@ function Overview$Input(Props) {
   };
   var onKeyDown = function (e) {
     if (e.key === "Enter") {
-      Curry._1(dispatch, /* AddCard */{
+      Curry._1(dispatch, {
+            TAG: /* AddCard */0,
             _0: Card.make(input, "", /* New */0)
           });
       e.currentTarget.value = "";
@@ -31,7 +32,7 @@ function Overview$Input(Props) {
     
   };
   var onClick = function (param) {
-    return Curry._1(dispatch, /* Review */0);
+    return Curry._1(dispatch, /* StartReview */0);
   };
   return React.createElement(React.Fragment, undefined, React.createElement("div", undefined, input), React.createElement("input", {
                   onKeyDown: onKeyDown,
@@ -47,16 +48,16 @@ var Input = {
 
 function Overview(Props) {
   var $$new = Curry._1(State.AppState.useSelector, (function (param) {
-          return Stack.Selectors.getByLevel(param.stack, /* New */0);
+          return Stack.getByLevel(param.stack, /* New */0);
         }));
   var familiar = Curry._1(State.AppState.useSelector, (function (param) {
-          return Stack.Selectors.getByLevel(param.stack, /* Familiar */1);
+          return Stack.getByLevel(param.stack, /* Familiar */1);
         }));
   var remember = Curry._1(State.AppState.useSelector, (function (param) {
-          return Stack.Selectors.getByLevel(param.stack, /* Remember */2);
+          return Stack.getByLevel(param.stack, /* Remember */2);
         }));
   var know = Curry._1(State.AppState.useSelector, (function (param) {
-          return Stack.Selectors.getByLevel(param.stack, /* Know */3);
+          return Stack.getByLevel(param.stack, /* Know */3);
         }));
   var iteration = Curry._1(State.AppState.useSelector, (function (param) {
           return param.iteration;

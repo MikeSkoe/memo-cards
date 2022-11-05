@@ -11,14 +11,14 @@ var empty = {
 
 function addCard(t, card) {
   return {
-          stack: Stack.Update.addCard(t.stack, card),
+          stack: Stack.addCard(t.stack, card),
           view: t.view,
           iteration: t.iteration
         };
 }
 
 function startReview(t) {
-  var cards = Stack.Selectors.getCards(t.stack, t.iteration);
+  var cards = Stack.getCards(t.stack, t.iteration);
   return {
           stack: t.stack,
           view: cards ? View.make(cards.hd, cards.tl) : View.empty,
@@ -26,39 +26,48 @@ function startReview(t) {
         };
 }
 
-function next(t, known) {
-  var review = t.view;
-  if (!review) {
+function next(t, familiarity) {
+  var view = t.view;
+  if (typeof view === "number") {
     return t;
   }
-  var newReview = View.Update.next(review._0, known);
-  var match = newReview.reviewing;
-  if (match !== undefined) {
+  if (view.TAG !== /* InProgress */0) {
+    return {
+            stack: Stack.updateCards(t.stack, view._0),
+            view: /* Overview */0,
+            iteration: t.iteration + 1 | 0
+          };
+  }
+  var stack = View.next(view._0, familiarity);
+  if (typeof stack === "number") {
     return {
             stack: t.stack,
-            view: /* Review */{
-              _0: newReview
+            view: /* Overview */0,
+            iteration: t.iteration
+          };
+  } else if (stack.TAG === /* InProgress */0) {
+    return {
+            stack: t.stack,
+            view: {
+              TAG: /* InProgress */0,
+              _0: stack._0
             },
             iteration: t.iteration
           };
   } else {
     return {
-            stack: Stack.Update.updateCards(Stack.Update.updateCards(t.stack, newReview.remember), newReview.forget),
+            stack: Stack.updateCards(t.stack, stack._0),
             view: /* Overview */0,
             iteration: t.iteration + 1 | 0
           };
   }
 }
 
-var Update = {
-  addCard: addCard,
-  startReview: startReview,
-  next: next
-};
-
 export {
   empty ,
-  Update ,
+  addCard ,
+  startReview ,
+  next ,
   
 }
 /* No side effect */

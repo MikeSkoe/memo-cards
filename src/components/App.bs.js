@@ -4,6 +4,7 @@ import * as Curry from "rescript/lib/es6/curry.js";
 import * as State from "../state/state.bs.js";
 import * as React from "react";
 import * as Review from "./Review.bs.js";
+import * as BoxComp from "./BoxComp.bs.js";
 import * as Overview from "./Overview.bs.js";
 
 import './app.css'
@@ -31,9 +32,18 @@ function App$Root(Props) {
   var view = Curry._1(State.AppState.useSelector, (function (param) {
           return param.view;
         }));
-  return React.createElement("div", undefined, view ? React.createElement(Review.make, {
-                    review: view._0
-                  }) : React.createElement(Overview.make, {}));
+  if (typeof view === "number") {
+    return React.createElement(Overview.make, {});
+  } else if (view.TAG === /* InProgress */0) {
+    return React.createElement(Review.make, {
+                review: view._0
+              });
+  } else {
+    return React.createElement(BoxComp.make, {
+                cards: view._0,
+                label: "Done"
+              });
+  }
 }
 
 var Root = {

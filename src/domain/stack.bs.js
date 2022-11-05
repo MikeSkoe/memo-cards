@@ -37,12 +37,6 @@ function updateCards(_t, _cards) {
   };
 }
 
-var Update = {
-  addCard: addCard,
-  updateCard: updateCard,
-  updateCards: updateCards
-};
-
 function getByLevel(t, level) {
   return Belt_List.keep(t, (function (card) {
                 return card.level === level;
@@ -86,18 +80,19 @@ function getCards(t, iteration) {
                   })), /* [] */0, Belt_List.concat);
 }
 
-var Selectors = {
-  getByLevel: getByLevel,
-  getCards: getCards
-};
-
 var empty = /* [] */0;
+
+var concat = Belt_List.concat;
 
 export {
   empty ,
   make ,
-  Update ,
-  Selectors ,
+  addCard ,
+  updateCard ,
+  updateCards ,
+  concat ,
+  getByLevel ,
+  getCards ,
   
 }
 /* No side effect */

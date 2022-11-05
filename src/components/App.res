@@ -14,12 +14,11 @@ module Root = {
     let make = () => {
         let view = AppState.useSelector(({ view }) => view);
 
-        <div>
-            {switch view {
-                | Review(review) => <Review review={review} />
-                | Overview => <Overview/>
-            }}
-        </div>
+        {switch view {
+            | View.InProgress(review) => <Review review={review} />
+            | View.Done(stack) => <BoxComp cards=stack label="Done" />
+            | View.Overview => <Overview/>
+        }}
     }
 }
 

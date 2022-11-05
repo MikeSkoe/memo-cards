@@ -14,42 +14,45 @@ let empty: t = {
     iteration: 0,
 };
 
-module Update = {
-    let addCard = (t, card): t => {
-        ...t,
-        stack: t.stack->Stack.Update.addCard(card),
-    }
+// -- UPDATE --
 
-    let startReview = t => {
-        ...t,
-        view: 
-            t.stack
-            ->Stack.Selectors.getCards(t.iteration)
-            ->cards => switch cards {
-                | list{} => View.empty
-                | list{head, ...tail} => View.make(head, tail)
-            }
-    }
+let addCard = (t, card): t => {
+    ...t,
+    stack: t.stack->Stack.addCard(card),
+}
 
-    let next = (t, known: bool) => switch t.view {
-        | View.Review(review) => {
-            let newReview = View.Update.next(review, known);
-
-            switch newReview.reviewing {
-                | Some(_) => {
-                    ...t,
-                    view: View.Review(newReview)
-                }
-                | None => {
-                    iteration: t.iteration + 1,
-                    stack: t.stack
-                        ->Stack.Update.updateCards(newReview.remember)
-                        ->Stack.Update.updateCards(newReview.forget),
-                    view: View.Overview,
-                }
-            }
+let startReview = t => {
+    ...t,
+    view: 
+        t.stack
+        ->Stack.getCards(t.iteration)
+        ->cards => switch cards {
+            | list{} => View.empty
+            | list{head, ...tail} => View.make(head, tail)
         }
-        | View.Overview => t
+}
+
+let next = (t, familiarity) => switch t.view {
+    | View.InProgress(view) => switch View.next(view, familiarity) {
+        | View.Done(stack) => {
+            iteration: t.iteration + 1,
+            stack: t.stack->Stack.updateCards(stack),
+            view: View.Overview,
+        }
+        | View.InProgress(view) => {
+            ...t,
+            view: View.InProgress(view),
+        }
+        | View.Overview => {
+            ...t,
+            view: View.Overview,
+        }
     }
+    | View.Done(stack) => {
+        iteration: t.iteration + 1,
+        stack: t.stack->Stack.updateCards(stack),
+        view: View.Overview,
+    }
+    | View.Overview => t
 }
 
