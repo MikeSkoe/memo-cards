@@ -28,31 +28,17 @@ let startReview = t => {
         ->Stack.getCards(t.iteration)
         ->cards => switch cards {
             | list{} => View.empty
-            | list{head, ...tail} => View.make(head, tail)
+            | list{head, ...tail} => View.make(list{head, ...tail})
         }
 }
 
-let next = (t, familiarity) => switch t.view {
-    | View.InProgress(view) => switch View.next(view, familiarity) {
-        | View.Done(stack) => {
-            iteration: t.iteration + 1,
-            stack: t.stack->Stack.updateCards(stack),
-            view: View.Overview,
-        }
-        | View.InProgress(view) => {
-            ...t,
-            view: View.InProgress(view),
-        }
-        | View.Overview => {
-            ...t,
-            view: View.Overview,
-        }
-    }
+let next = (t, familiarity) => switch View.next(t.view, familiarity) {
     | View.Done(stack) => {
         iteration: t.iteration + 1,
         stack: t.stack->Stack.updateCards(stack),
         view: View.Overview,
     }
-    | View.Overview => t
+    | View.InProgress(view, cursor) => { ...t, view: View.InProgress(view, cursor) }
+    | View.Overview => { ...t, view: View.Overview }
 }
 

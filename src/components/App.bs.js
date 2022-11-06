@@ -28,22 +28,29 @@ function classnames(_list, _acc) {
   };
 }
 
+var app = {
+  border: "1px solid gray",
+  width: "clamp(500px, 75vw, 800px)"
+};
+
 function App$Root(Props) {
   var view = Curry._1(State.AppState.useSelector, (function (param) {
           return param.view;
         }));
-  if (typeof view === "number") {
-    return React.createElement(Overview.make, {});
-  } else if (view.TAG === /* InProgress */0) {
-    return React.createElement(Review.make, {
-                review: view._0
-              });
-  } else {
-    return React.createElement(BoxComp.make, {
-                cards: view._0,
-                label: "Done"
-              });
-  }
+  var tmp;
+  tmp = typeof view === "number" ? React.createElement(Overview.make, {}) : (
+      view.TAG === /* InProgress */0 ? React.createElement(Review.make, {
+              stack: view._0,
+              cursor: view._1
+            }) : React.createElement(BoxComp.make, {
+              stack: view._0,
+              label: "Done",
+              cursor: undefined
+            })
+    );
+  return React.createElement("div", {
+              style: app
+            }, tmp);
 }
 
 var Root = {
@@ -64,6 +71,7 @@ var make = App;
 export {
   AppState ,
   classnames ,
+  app ,
   Root ,
   make ,
   

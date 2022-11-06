@@ -1,29 +1,3 @@
-module Input = {
-    @react.component
-    let make = () => {
-        let dispatch = State.AppState.useDispatch();
-        let (input, setInput) = React.useState(() => "");
-
-        let onChange = e => ReactEvent.Form.currentTarget(e)["value"]->setInput;
-        let onKeyDown = e => {
-            if ReactEvent.Keyboard.key(e) === "Enter" {
-                Card.make(~front=input, ~back="", ~level=Card.New)
-                    ->State.AddCard
-                    ->dispatch
-                ReactEvent.Keyboard.currentTarget(e)["value"] = "";
-                setInput(_ => "");
-            }
-        }
-        let onClick = _ => dispatch(State.StartReview);
-
-        <>
-            <div>{input->React.string}</div>
-            <input onChange onKeyDown />
-            <button onClick>{"Start"->React.string}</button>
-        </>
-    }
-}
-
 @react.component
 let make = () => {
     let new = State.AppState.useSelector(({ stack }) => stack->Stack.getByLevel(Card.New));
@@ -37,11 +11,11 @@ let make = () => {
         <TitleComp>
             {`Iteration: ${iteration->Belt.Int.toString}`}
         </TitleComp>
-        <Input />
-        <BoxComp cards=new label="New"/>
-        <BoxComp cards=familiar label="Familiar"/>
-        <BoxComp cards=remember label="Remember"/>
-        <BoxComp cards=know label="Know"/>
+        <Form />
+        <BoxComp stack=new label="New" cursor={None} />
+        <BoxComp stack=familiar label="Familiar" cursor={None} />
+        <BoxComp stack=remember label="Remember" cursor={None} />
+        <BoxComp stack=know label="Know" cursor={None} />
     </>
 }
 

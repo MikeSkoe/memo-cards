@@ -1,7 +1,6 @@
 @react.component
-let make = (~review: View.review) => {
+let make = (~stack: Stack.t, ~cursor: int) => {
     let dispatch = State.AppState.useDispatch();
-    let { toReview, reviewing, skipped, remember, forget } = review;
 
     <>
         <TitleComp>{"Review"}</TitleComp>
@@ -17,12 +16,7 @@ let make = (~review: View.review) => {
             ->React.array
         }
 
-        <CardComp card=reviewing />
-
-        <BoxComp cards=toReview label="To review" />
-        <BoxComp cards=remember label="Remember" />
-        <BoxComp cards=forget label="Forget" />
-        <BoxComp cards=skipped label="Skipped" />
+        <BoxComp stack label="Skipped" cursor={Some(cursor)} />
     </>
 }
 

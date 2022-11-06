@@ -21,24 +21,16 @@ function startReview(t) {
   var cards = Stack.getCards(t.stack, t.iteration);
   return {
           stack: t.stack,
-          view: cards ? View.make(cards.hd, cards.tl) : View.empty,
+          view: cards ? View.make({
+                  hd: cards.hd,
+                  tl: cards.tl
+                }) : View.empty,
           iteration: t.iteration
         };
 }
 
 function next(t, familiarity) {
-  var view = t.view;
-  if (typeof view === "number") {
-    return t;
-  }
-  if (view.TAG !== /* InProgress */0) {
-    return {
-            stack: Stack.updateCards(t.stack, view._0),
-            view: /* Overview */0,
-            iteration: t.iteration + 1 | 0
-          };
-  }
-  var stack = View.next(view._0, familiarity);
+  var stack = View.next(t.view, familiarity);
   if (typeof stack === "number") {
     return {
             stack: t.stack,
@@ -50,7 +42,8 @@ function next(t, familiarity) {
             stack: t.stack,
             view: {
               TAG: /* InProgress */0,
-              _0: stack._0
+              _0: stack._0,
+              _1: stack._1
             },
             iteration: t.iteration
           };

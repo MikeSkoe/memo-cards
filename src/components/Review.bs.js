@@ -5,12 +5,12 @@ import * as Curry from "rescript/lib/es6/curry.js";
 import * as State from "../state/state.bs.js";
 import * as React from "react";
 import * as BoxComp from "./BoxComp.bs.js";
-import * as CardComp from "./CardComp.bs.js";
 import * as TitleComp from "./TitleComp.bs.js";
 import * as Belt_Array from "rescript/lib/es6/belt_Array.js";
 
 function Review(Props) {
-  var review = Props.review;
+  var stack = Props.stack;
+  var cursor = Props.cursor;
   var dispatch = Curry._1(State.AppState.useDispatch, undefined);
   return React.createElement(React.Fragment, undefined, React.createElement(TitleComp.make, {
                   children: "Review"
@@ -27,20 +27,10 @@ function Review(Props) {
                                               });
                                   })
                               }, Card.familiarityToString(familiarity));
-                  })), React.createElement(CardComp.make, {
-                  card: review.reviewing
-                }), React.createElement(BoxComp.make, {
-                  cards: review.toReview,
-                  label: "To review"
-                }), React.createElement(BoxComp.make, {
-                  cards: review.remember,
-                  label: "Remember"
-                }), React.createElement(BoxComp.make, {
-                  cards: review.forget,
-                  label: "Forget"
-                }), React.createElement(BoxComp.make, {
-                  cards: review.skipped,
-                  label: "Skipped"
+                  })), React.createElement(BoxComp.make, {
+                  stack: stack,
+                  label: "Skipped",
+                  cursor: cursor
                 }));
 }
 

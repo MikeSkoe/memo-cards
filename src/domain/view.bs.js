@@ -2,54 +2,40 @@
 
 import * as Card from "./card.bs.js";
 import * as Stack from "./stack.bs.js";
+import * as Belt_List from "rescript/lib/es6/belt_List.js";
 
-var emptyReview = {
-  toReview: Stack.empty,
-  reviewing: Card.empty,
-  remember: Stack.empty,
-  forget: Stack.empty,
-  skipped: Stack.empty
-};
-
-function make(head, tail) {
+function make(stack) {
   return {
           TAG: /* InProgress */0,
-          _0: {
-            toReview: tail,
-            reviewing: head,
-            remember: Stack.empty,
-            forget: Stack.empty,
-            skipped: Stack.empty
-          }
+          _0: stack,
+          _1: 0
         };
 }
 
-function next(param, familiarity) {
-  var skipped = param.skipped;
-  var forget = param.forget;
-  var remember = param.remember;
-  var toReview = param.toReview;
-  var reviewing$p = Card.mapLevel(param.reviewing, (function (__x) {
-          return Card.shiftLevel(__x, familiarity);
+function next(t, familiarity) {
+  if (typeof t === "number") {
+    return t;
+  }
+  if (t.TAG !== /* InProgress */0) {
+    return t;
+  }
+  var cursor = t._1;
+  var stack$p = Stack.mapAt(t._0, cursor, (function (__x) {
+          return Card.mapLevel(__x, (function (__x) {
+                        return Card.shiftLevel(__x, familiarity);
+                      }));
         }));
-  var forget$1 = familiarity === /* Back */0 ? Stack.addCard(forget, reviewing$p) : forget;
-  var skipped$1 = familiarity === /* Skip */1 ? Stack.addCard(skipped, reviewing$p) : skipped;
-  var remember$1 = familiarity === /* Next */2 ? Stack.addCard(remember, reviewing$p) : remember;
-  if (toReview) {
+  var cursor$p = cursor + 1 | 0;
+  if (cursor$p >= Belt_List.size(stack$p)) {
     return {
-            TAG: /* InProgress */0,
-            _0: {
-              toReview: toReview.tl,
-              reviewing: toReview.hd,
-              remember: remember$1,
-              forget: forget$1,
-              skipped: skipped$1
-            }
+            TAG: /* Done */1,
+            _0: stack$p
           };
   } else {
     return {
-            TAG: /* Done */1,
-            _0: Stack.concat(Stack.concat(Stack.addCard(forget$1, reviewing$p), skipped$1), remember$1)
+            TAG: /* InProgress */0,
+            _0: stack$p,
+            _1: cursor$p
           };
   }
 }
@@ -57,7 +43,6 @@ function next(param, familiarity) {
 var empty = /* Overview */0;
 
 export {
-  emptyReview ,
   empty ,
   make ,
   next ,

@@ -5,11 +5,13 @@ import * as CardComp from "./CardComp.bs.js";
 import * as Belt_List from "rescript/lib/es6/belt_List.js";
 
 function BoxComp(Props) {
-  var cards = Props.cards;
+  var stack = Props.stack;
   var label = Props.label;
-  return React.createElement(React.Fragment, undefined, React.createElement("h2", undefined, label), Belt_List.toArray(Belt_List.map(cards, (function (card) {
+  var cursor = Props.cursor;
+  return React.createElement(React.Fragment, undefined, React.createElement("h2", undefined, label), Belt_List.toArray(Belt_List.mapWithIndex(stack, (function (ind, card) {
                         return React.createElement(CardComp.make, {
                                     card: card,
+                                    selected: cursor !== undefined ? cursor === ind : false,
                                     key: card.front
                                   });
                       }))));
